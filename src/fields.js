@@ -61,9 +61,9 @@ const ROLES = {
     _cuis: "Cuisine",
     _ling: "Lingerie",
     _autre: "Autre",
-    _campeur: "Campeur",
-    _attente: "Liste d'attente",
-    _attente_reponse: "En attente d'une réponse"
+    // _campeur: "Campeur",
+    // _attente: "Liste d'attente",
+    // _attente_reponse: "En attente d'une réponse"
 };
 
 const SEXE = {
@@ -182,11 +182,11 @@ var MixinRenderFields = {
         approfondissement: value => APPROFONDISSEMENTS[value],
         diplome: value => DIPLOMES[value],
         date: value =>
-            value ? `${value.day}/${value.month}/${value.year}` : "-",
+            value ? `${value.day}/${value.month}/${value.year}` : null,
         sexe: value => SEXE[value],
         telephones: value => (value ? value.join(" ; ") : "-"),
         bool: value => (value ? "Oui" : "Non"),
-        departement: value => `${value} - ${DEPARTEMENTS[value]}`
+        departement: value => `${DEPARTEMENTS[value]} (${value})`
     }
 };
 
@@ -194,8 +194,11 @@ var MixinEditFields = {
     data() {
         return {
             EDIT: {
-                sexe: Object.keys(SEXE).map(k => ({ value: k, text: SEXE[k] }))
-            }
+				sexe: Object.keys(SEXE).map(k => ({ value: k, text: SEXE[k] })),
+				role: Object.keys(ROLES).map(k => ({ value: k, text: ROLES[k] })).sort((a,b) => a.text < b.text ? -1 : 1),
+				departement: Object.keys(DEPARTEMENTS).map(k => ({ value: k, text: MixinRenderFields.methods.departement(k)}))
+														.sort((a,b) => a.text < b.text ? -1 : 1),
+			}
         };
     }
 };

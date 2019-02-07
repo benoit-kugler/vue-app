@@ -1,6 +1,6 @@
 <template>
     <v-container fluid>
-        <v-dialog v-model="showEditDialog" max-width="800px" persistent>
+        <v-dialog v-model="showEditDialog" max-width="1200px" persistent>
             <FormEquipier :editedItem="editedItem" @reject="showEditDialog = !showEditDialog"></FormEquipier>
         </v-dialog>
         <v-toolbar height="45">
