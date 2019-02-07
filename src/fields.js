@@ -1,4 +1,4 @@
-export { DIPLOMES, MixinRenderer };
+export { DIPLOMES, MixinRenderFields, MixinEditFields };
 
 const DIPLOMES = {
     bafa: "BAFA Titulaire",
@@ -175,16 +175,27 @@ const DEPARTEMENTS = {
     "974": "La Réunion",
     "976": "Mayotte"
 };
-var MixinRenderer = {
+var MixinRenderFields = {
     methods: {
         role: value => ROLES[value],
         document: value => DOCUMENTS[value],
         approfondissement: value => APPROFONDISSEMENTS[value],
         diplome: value => DIPLOMES[value],
-        date: value => value ? `${value.day}/${value.month}/${value.year}` : "-",
+        date: value =>
+            value ? `${value.day}/${value.month}/${value.year}` : "-",
         sexe: value => SEXE[value],
-        telephones: value => value ? value.join(" ; ") : "-",
+        telephones: value => (value ? value.join(" ; ") : "-"),
         bool: value => (value ? "Oui" : "Non"),
-        departement: value => `${value} - ${DEPARTEMENTS[value]}`,
+        departement: value => `${value} - ${DEPARTEMENTS[value]}`
+    }
+};
+
+var MixinEditFields = {
+    data() {
+        return {
+            EDIT: {
+                sexe: Object.keys(SEXE).map(k => ({ value: k, text: SEXE[k] }))
+            }
+        };
     }
 };

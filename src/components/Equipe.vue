@@ -1,16 +1,20 @@
 <template>
     <v-container fluid>
+        <v-dialog v-model="showEditDialog" max-width="800px" persistent>
+            <FormEquipier :editedItem="editedItem" @reject="showEditDialog = !showEditDialog"></FormEquipier>
+        </v-dialog>
         <v-toolbar height="45">
             <v-menu open-on-hover bottom offset-y>
-				<v-btn slot="activator" icon>
-					<v-icon>info</v-icon>
-				</v-btn>
-				<v-card>
-				<v-card-text>
-					<b>{{ nbMembres }}</b> équipier(s) <br>
-					<b>{{ nbAnims }}</b> animateur(s)
-				</v-card-text>
-				</v-card>
+                <v-btn slot="activator" icon>
+                    <v-icon>info</v-icon>
+                </v-btn>
+                <v-card>
+                    <v-card-text>
+                        <b>{{ nbMembres }}</b> équipier(s)
+                        <br>
+                        <b>{{ nbAnims }}</b> animateur(s)
+                    </v-card-text>
+                </v-card>
             </v-menu>
             <v-toolbar-title>Liste des équipiers</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -59,7 +63,14 @@
             <v-progress-linear slot="progress" :height="loadingHeight" indeterminate></v-progress-linear>
 
             <template slot="items" slot-scope="props">
-                <tr :active="props.selected" @click="select(props.item)">
+                <tr
+                    :active="props.selected"
+                    @click="select(props.item)"
+                    @dblclick="startEdit(props.item)"
+                >
+                    <td>
+                        <v-icon small class="mr-2" @click="startEdit(props.item)">edit</v-icon>
+                    </td>
                     <td>{{ props.item.nom }}</td>
                     <td>{{ props.item.prenom }}</td>
                     <td>{{ role(props.item.role) }}</td>
@@ -89,15 +100,20 @@
 </template>
 
 <script>
-import { MixinRenderer } from "@/fields.js";
+import { MixinRenderFields } from "@/fields.js";
 import { DataTableMixin } from "@/mixins.js";
+import FormEquipier from "@/components/FormEquipier";
 
 export default {
     // props : ["header"],
-    mixins: [MixinRenderer, DataTableMixin],
+    mixins: [MixinRenderFields, DataTableMixin],
+    components: {
+        FormEquipier
+    },
     data() {
         return {
             header: [
+                { text: "", value: "_action", sortable: false },
                 { text: "Nom", value: "nom", align: "center", sortable: true },
                 {
                     text: "Prénom",
@@ -197,11 +213,16 @@ export default {
                 { nom: "Benoit", id: 45 }
             ]
         };
-	},
-	computed : {
-		nbMembres () {return this.items.length },
-		nbAnims () {return this.items.filter(r => r.role === "_anim").length}
-	}
+    },
+    computed: {
+        nbMembres() {
+            return this.items.length;
+        },
+        nbAnims() {
+            return this.items.filter(r => r.role === "_anim").length;
+        }
+    },
+    methods: {}
 };
 </script>
 
