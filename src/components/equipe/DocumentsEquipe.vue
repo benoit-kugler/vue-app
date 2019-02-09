@@ -1,19 +1,27 @@
 <template>
     <div>
-		<v-dialog v-model="showUploadFile" max-width="400">
-			<v-card>
-				<v-card-title class="headline">Ajouter un document sur le serveur</v-card-title>
-				<v-card-text>
-				<v-select v-model="uploadedFile.categorie" label="Catégorie"></v-select>
-				<v-text-field v-model="uploadedFile.description" label="Description"></v-text-field>
-				<v-text-field label="Fichier"></v-text-field>
-				<v-card-actions>
-					<v-spacer></v-spacer>
-					<v-btn @click="uploadFile">Ajouter</v-btn>
-				</v-card-actions>
-				</v-card-text>
-			</v-card>
-		</v-dialog>
+        <v-dialog v-model="showUploadFile" max-width="400">
+            <v-card>
+                <v-card-title class="headline">Ajouter un document sur le serveur</v-card-title>
+                <v-card-text>
+                    <v-select
+                        v-model="uploadedFile.categorie"
+                        label="Catégorie"
+                        :items="EDIT.documents"
+                    ></v-select>
+                    <v-text-field
+                        v-model="uploadedFile.description"
+                        label="Description"
+                        hint="(Optionnel) Descrition du document"
+                    ></v-text-field>
+                    <upload-file label="Fichier" required v-model="uploadedFile.file"></upload-file>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn @click="uploadFile" :disabled="uploadedFile.file == null">Ajouter</v-btn>
+                    </v-card-actions>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
         <v-toolbar height="45">
             <v-toolbar-title>Documents de l'équipe</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -50,17 +58,19 @@
 
                 <v-tooltip bottom>
                     <template slot="activator">
-						<v-menu left>
-							<template slot="activator">
-					    		<v-btn icon>
-                            		<v-icon>folder</v-icon>
-                        		</v-btn>
-							</template>
-							<v-list>
-								<v-list-tile @click="downloadAll(true)">Uniquement les documents requis</v-list-tile>
-								<v-list-tile @click="downloadAll(false)">Tous les documents</v-list-tile>
-							</v-list>
-						</v-menu>
+                        <v-menu left>
+                            <template slot="activator">
+                                <v-btn icon>
+                                    <v-icon>folder</v-icon>
+                                </v-btn>
+                            </template>
+                            <v-list>
+                                <v-list-tile
+                                    @click="downloadAll(true)"
+                                >Uniquement les documents requis</v-list-tile>
+                                <v-list-tile @click="downloadAll(false)">Tous les documents</v-list-tile>
+                            </v-list>
+                        </v-menu>
                     </template>Télécharger plusieurs documents
                 </v-tooltip>
             </v-toolbar-items>
@@ -80,27 +90,34 @@
                         :key="docCat"
                         :style="`background:${renderCell(props.item[docCat])[0]}`"
                     >
-                        <v-checkbox
-                            hide-details
-                            :label="renderCell(props.item[docCat])[1]"
-                            v-model="props.item[docCat].need"
-                        ></v-checkbox>
-                        <v-menu>
-                            <v-btn
-                                slot="activator"
-                                icon
-                                v-if="props.item[docCat].docs.length > 0"
-                            >
-                                <v-icon>download</v-icon>
-                            </v-btn>
-                            <v-list>
-                                <v-list-tile
-                                    v-for="doc in props.item[docCat].docs"
-                                    :key="doc.id"
-									@click="downloadDoc(doc.id)"
-                                >{{ renderDocumentName(doc) }}</v-list-tile>
-                            </v-list>
-                        </v-menu>
+                        <v-layout row>
+                            <v-flex md4>
+                                <v-menu :disabled="!(props.item[docCat].docs.length > 0)">
+                                    <v-btn
+                                        slot="activator"
+                                        icon
+                                        :disabled="!(props.item[docCat].docs.length > 0)"
+                                    >
+                                        <v-icon>cloud_download</v-icon>
+                                    </v-btn>
+                                    <v-list>
+                                        <v-list-tile
+                                            v-for="doc in props.item[docCat].docs"
+                                            :key="doc.id"
+                                            @click="downloadDoc(doc.id)"
+                                        >{{ renderDocumentName(doc) }}</v-list-tile>
+                                    </v-list>
+                                </v-menu>
+                            </v-flex>
+                            <v-flex md8 height="100%">
+                                <v-checkbox
+                                    height="50px"
+                                    hide-details
+                                    :label="renderCell(props.item[docCat])[1]"
+                                    v-model="props.item[docCat].need"
+                                ></v-checkbox>
+                            </v-flex>
+                        </v-layout>
                     </td>
                 </tr>
             </template>
@@ -110,15 +127,19 @@
 
 <script>
 import { DataTableMixin } from "@/mixins.js";
-import { DOCUMENTS } from "@/fields.js";
+import { DOCUMENTS, MixinEditFields } from "@/fields.js";
+import UploadFile from "@/components/UploadFile.vue";
 
 export default {
     name: "DocumentsEquipe",
-    mixins: [DataTableMixin],
+    mixins: [DataTableMixin, MixinEditFields],
+    components: {
+        UploadFile
+    },
     data() {
         return {
-			showUploadFile : false,
-			uploadedFile: {},
+            showUploadFile: false,
+            uploadedFile: {},
             docCats: Object.keys(DOCUMENTS),
             items: [
                 {
@@ -208,7 +229,7 @@ export default {
                 t = "Manquant";
             } else {
                 c = "none";
-                t = "";
+                t = "Non demandé";
             }
             return [c, t];
         },
@@ -231,20 +252,34 @@ export default {
             };
             const data = this.items.map(ft);
             // send to server
-		},
-		downloadDoc(docId) {
-			console.log(docId)
-		},
-		downloadAll(only_requis) {
-			console.log(only_requis)
-		},
-		uploadFile() {
-			var [id, is_temporaire]= [this.currentSelection.id, this.currentSelection.is_temporaire]
-			// requete
-		}
+        },
+        downloadDoc(docId) {
+            console.log(docId);
+        },
+        downloadAll(only_requis) {
+            console.log(only_requis);
+        },
+        uploadFile() {
+            var [id, is_temporaire] = [
+                this.currentSelection.id,
+                this.currentSelection.is_temporaire
+            ];
+            let formData = new FormData();
+            formData.append("id", id);
+            formData.append("is_temporaire", is_temporaire);
+            formData.append("categorie", this.uploadedFile.categorie);
+            formData.append("description", this.uploadedFile.description);
+            formData.append(
+                "fichier",
+                this.uploadedFile.file,
+                this.uploadedFile.file.name
+            );
+            // post request
+            console.log(formData);
+        }
     }
 };
 </script>
 
-<style>
+<style scoped>
 </style>

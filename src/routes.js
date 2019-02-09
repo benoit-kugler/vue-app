@@ -1,5 +1,6 @@
 import Accueil from "./components/Accueil.vue";
-import Equipe from "./components/Equipe.vue";
+import Equipe from "./components/equipe/Equipe.vue";
+import Inscrits from "./components/inscrits/Inscrits.vue";
 
 const links = {
     index: {
@@ -7,10 +8,10 @@ const links = {
         title: "Accueil",
         description: "Page d'accueil."
 	},
-	participants: {
-        path: "/directeurs/participants",
-        title: "Participants",
-        description: "Accès à la liste des inscrits."
+	inscrits: {
+        path: "/directeurs/inscrits",
+        title: "Inscrits",
+        description: "Accès à la liste des inscrits et aux groupes."
     },
     equipe: {
         path: "/directeurs/equipe",
@@ -51,5 +52,10 @@ export const routes = [
         path: links.equipe.path,
         component: Equipe,
         meta: { title: links.equipe.title }
-    }
+	},
+	{
+        path: links.inscrits.path,
+        component: Inscrits,
+        meta: { title: links.inscrits.title }
+	},
 ];

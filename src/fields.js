@@ -196,6 +196,7 @@ var MixinEditFields = {
             EDIT: {
 				sexe: Object.keys(SEXE).map(k => ({ value: k, text: SEXE[k] })),
 				role: Object.keys(ROLES).map(k => ({ value: k, text: ROLES[k] })).sort((a,b) => a.text < b.text ? -1 : 1),
+				documents: Object.keys(DOCUMENTS).map(k => ({ value: k, text: DOCUMENTS[k] })).sort((a,b) => a.text < b.text ? -1 : 1),
 				departement: Object.keys(DEPARTEMENTS).map(k => ({ value: k, text: MixinRenderFields.methods.departement(k)}))
 														.sort((a,b) => a.text < b.text ? -1 : 1),
 			}

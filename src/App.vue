@@ -48,20 +48,15 @@
       </v-card-text>
     </v-footer>
 	
-    <!-- <v-content>
-      <HelloWorld/>
-    </v-content>-->
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
 import { routes } from "@/routes";
 
 export default {
   name: "App",
   components: {
-    HelloWorld
   },
   data() {
     return {
