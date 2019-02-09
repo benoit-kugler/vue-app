@@ -1,6 +1,12 @@
 <template>
     <div class="ma-2">
-        <v-data-table :headers="header" :items="items" hide-actions :loading="loading" v-model="selected">
+        <v-data-table
+            :headers="header"
+            :items="items"
+            hide-actions
+            :loading="loading"
+            v-model="selected"
+        >
             <template slot="no-data">
                 <v-alert
                     :value="true"
@@ -19,15 +25,13 @@
                     <td>{{ props.item.nom }}</td>
                     <td>{{ props.item.prenom }}</td>
                     <td class="text-xs-center">{{ date(props.item.date_naissance) }}</td>
-					<td>
-                        <v-icon small class="mr-2" @click="1">rattache</v-icon>
+                    <td class="text-xs-center">
+                        <v-icon small class="mr-2" @click="$emit('rattache', props.item.id)">link</v-icon>
                     </td>
                 </tr>
             </template>
         </v-data-table>
     </div>
-
-
 </template>
 
 <script>
@@ -54,13 +58,13 @@ export default {
                 {
                     text: "Date de naissance",
                     value: "date_naissance",
-                    sortable: true
-				},
-				{ text : "", value :"_actions", sortable: false}
+                    sortable: true, align: "center"
+                },
+                { text: "Rattacher au profil", value: "rattacher", sortable: false, align: "center"}
             ],
             items: [
                 {
-					id : 1,
+                    id: 1,
                     pertinence: 30,
                     nom: "KUGLER",
                     prenom: "Benoit",
@@ -71,7 +75,7 @@ export default {
                         year: 1970
                     }
                 },
-                { id : 2, pertinence: 90, nom: "KIGLER" },
+                { id: 2, pertinence: 90, nom: "KIGLER" },
                 { pertinence: 90, nom: "KIGLER" },
                 { pertinence: 90, nom: "KIGLER" },
                 { pertinence: 90, nom: "KIGLER" },
@@ -95,7 +99,7 @@ export default {
                 { pertinence: 90, nom: "KIGLER" },
                 { pertinence: 90, nom: "KIGLER" },
                 { pertinence: 90, nom: "KIGLER" },
-                { pertinence: 90, nom: "KIGLER" },
+                { pertinence: 90, nom: "KIGLER" }
             ]
         };
     },

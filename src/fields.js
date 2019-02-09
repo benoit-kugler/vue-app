@@ -1,4 +1,4 @@
-export { DIPLOMES, MixinRenderFields, MixinEditFields };
+export { DOCUMENTS, MixinRenderFields, MixinEditFields };
 
 const DIPLOMES = {
     bafa: "BAFA Titulaire",

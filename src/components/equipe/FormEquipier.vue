@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-card-title>
-			<slot name="title">
+			<slot name="title" :tmpItem="tmpItem">
 				<span class="headline">Modifier la fiche de {{ tmpItem.prenom }} {{ tmpItem.nom }}</span>
 			</slot>
         </v-card-title>

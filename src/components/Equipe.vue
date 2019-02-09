@@ -9,21 +9,39 @@
                 @accept="updateItem"
             ></form-equipier>
         </v-dialog>
-        <v-dialog v-model="addEquipier" max-width="1000px">
+        <v-dialog v-model="addEquipier" max-width="1000px" @keydown.esc="addEquipier = false">
             <add-equipier></add-equipier>
         </v-dialog>
+		<v-dialog v-model="confirmeSupprime" max-width="400px" lazy>
+			<v-card>
+				<v-card-title class="headline">Suppression d'un équipier</v-card-title>
+				<v-card-text>
+					Etes vous sur de retirer <b>{{ currentSelection.prenom }} {{ currentSelection.nom }}</b> de votre équipe ?
+				</v-card-text>
+				<v-card-actions>
+					<v-btn flat @click="confirmeSupprime = false">Annuler</v-btn>
+					<v-spacer></v-spacer>
+					<v-btn flat @click="supprimeEquipier">Retirer de l'équipe</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
+		<v-dialog v-model="showDocuments">
+			<documents-equipe></documents-equipe>
+		</v-dialog>
+
+
         <v-toolbar height="45">
             <v-menu open-on-hover bottom offset-y>
-                <v-btn slot="activator" icon>
-                    <v-icon>info</v-icon>
-                </v-btn>
-                <v-card>
-                    <v-card-text>
-                        <b>{{ nbMembres }}</b> équipier(s)
-                        <br>
-                        <b>{{ nbAnims }}</b> animateur(s)
-                    </v-card-text>
-                </v-card>
+					<v-btn slot="activator" icon>
+						<v-icon>info</v-icon>
+					</v-btn>
+					<v-card>
+						<v-card-text>
+							<b>{{ nbMembres }}</b> équipier(s)
+							<br>
+							<b>{{ nbAnims }}</b> animateur(s)
+						</v-card-text>
+					</v-card>
             </v-menu>
             <v-toolbar-title>Liste des équipiers</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -35,7 +53,7 @@
                 </v-tooltip>
 
                 <v-tooltip bottom>
-                    <v-btn slot="activator" flat small :disabled="!hasSelection">
+                    <v-btn slot="activator" flat small :disabled="!hasSelection" @click="confirmeSupprime = true">
                         <v-icon class="mr-1">delete</v-icon>Supprimer
                     </v-btn>Enlever cet équipier de l'équipe
                 </v-tooltip>
@@ -45,7 +63,7 @@
                     </v-btn>Télécharger une liste au format Excel
                 </v-tooltip>
                 <v-tooltip bottom>
-                    <v-btn slot="activator" flat small>
+                    <v-btn slot="activator" flat small @click="showDocuments = true">
                         <v-icon class="mr-1">folder</v-icon>Documents
                     </v-btn>Afficher les pièces justificatives des membres de l'équipe
                 </v-tooltip>
@@ -113,16 +131,21 @@ import { MixinRenderFields } from "@/fields.js";
 import { DataTableMixin } from "@/mixins.js";
 import FormEquipier from "@/components/equipe/FormEquipier";
 import AddEquipier from "@/components/equipe/AddEquipier";
+import DocumentsEquipe from "@/components/equipe/DocumentsEquipe";
 
 export default {
     // props : ["header"],
     mixins: [MixinRenderFields, DataTableMixin],
     components: {
         FormEquipier,
-        AddEquipier
+		AddEquipier,
+		DocumentsEquipe
     },
     data() {
         return {
+			addEquipier: false,
+			confirmeSupprime: false,
+			showDocuments: false,
             header: [
                 { text: "", value: "_action", sortable: false },
                 { text: "Nom", value: "nom", align: "center", sortable: true },
@@ -223,7 +246,6 @@ export default {
                 },
                 { nom: "Benoit", id: 45 }
 			],
-			addEquipier: false
         };
     },
     computed: {
@@ -234,7 +256,12 @@ export default {
             return this.items.filter(r => r.role === "_anim").length;
         }
     },
-    methods: {}
+    methods: {
+		supprimeEquipier (){ // confirmation déjà demandée
+			this.confirmeSupprime = false
+			console.log("suppresion de ", this.currentSelection)
+		}
+	}
 };
 </script>
 

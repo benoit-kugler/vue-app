@@ -45,6 +45,9 @@ var DataTableMixin = {
         hasSelection() {
             return this.selected.length >= 1;
 		},
+		currentSelection() {
+			return this.selected[0] || {}
+		},
 		showEditDialog () {
 			return this.editedItem != null
 		}
