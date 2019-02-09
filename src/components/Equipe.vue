@@ -1,7 +1,16 @@
 <template>
     <v-container fluid>
         <v-dialog v-model="showEditDialog" max-width="1200px" persistent>
-            <FormEquipier :editedItem="editedItem" @reject="showEditDialog = !showEditDialog"></FormEquipier>
+            <form-equipier
+                :editedItem="editedItem"
+                withButtons
+                withDetails
+                @reject="editedItem = null"
+                @accept="updateItem"
+            ></form-equipier>
+        </v-dialog>
+        <v-dialog v-model="addEquipier" max-width="1000px">
+            <add-equipier></add-equipier>
         </v-dialog>
         <v-toolbar height="45">
             <v-menu open-on-hover bottom offset-y>
@@ -20,7 +29,7 @@
             <v-spacer></v-spacer>
             <v-toolbar-items>
                 <v-tooltip bottom>
-                    <v-btn slot="activator" flat small>
+                    <v-btn @click="addEquipier = true" slot="activator" flat small>
                         <v-icon class="mr-1">add</v-icon>Ajouter un équipier
                     </v-btn>Rechercher et déclarer un nouvel équipier
                 </v-tooltip>
@@ -66,10 +75,10 @@
                 <tr
                     :active="props.selected"
                     @click="select(props.item)"
-                    @dblclick="startEdit(props.item)"
+                    @dblclick="editedItem = props.item"
                 >
                     <td>
-                        <v-icon small class="mr-2" @click="startEdit(props.item)">edit</v-icon>
+                        <v-icon small class="mr-2" @click="editedItem = props.item">edit</v-icon>
                     </td>
                     <td>{{ props.item.nom }}</td>
                     <td>{{ props.item.prenom }}</td>
@@ -102,13 +111,15 @@
 <script>
 import { MixinRenderFields } from "@/fields.js";
 import { DataTableMixin } from "@/mixins.js";
-import FormEquipier from "@/components/FormEquipier";
+import FormEquipier from "@/components/equipe/FormEquipier";
+import AddEquipier from "@/components/equipe/AddEquipier";
 
 export default {
     // props : ["header"],
     mixins: [MixinRenderFields, DataTableMixin],
     components: {
-        FormEquipier
+        FormEquipier,
+        AddEquipier
     },
     data() {
         return {
@@ -211,7 +222,8 @@ export default {
                     ville_naissance: null
                 },
                 { nom: "Benoit", id: 45 }
-            ]
+			],
+			addEquipier: false
         };
     },
     computed: {
