@@ -36,5 +36,19 @@
 - update_inscrit 
 	dic (id_groupe, bus, semaine, mail, materiel_ski)
 
+- save groupe
+	liste groupe,mode = 'save', 'save_apply', 'save_apply_erase'
+
 - download_liste
 	mode , options
+
+## Details du camp
+
+- get
+	dic_form, dic_envois
+
+- save _details
+	dic_form
+
+- save_envois (save + notification centre d'inscriptions)
+

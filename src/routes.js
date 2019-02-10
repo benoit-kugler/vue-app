@@ -1,6 +1,7 @@
 import Accueil from "./components/Accueil.vue";
 import Equipe from "./components/equipe/Equipe.vue";
 import Inscrits from "./components/inscrits/Inscrits.vue";
+import Details from "./components/details/Details.vue";
 
 
 const links = {
@@ -58,5 +59,10 @@ export const routes = [
         path: links.inscrits.path,
 		component: Inscrits,
         meta: { title: links.inscrits.title }
+	},
+	{
+        path: links.details.path,
+		component: Details,
+        meta: { title: links.details.title }
 	},
 ];
