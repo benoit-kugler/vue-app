@@ -30,7 +30,7 @@
 		</v-dialog>
 
 
-        <v-toolbar height="45">
+        <v-toolbar dense>
             <v-menu open-on-hover bottom offset-y>
 					<v-btn slot="activator" icon>
 						<v-icon>info</v-icon>

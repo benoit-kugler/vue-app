@@ -22,7 +22,7 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
-        <v-toolbar height="45">
+        <v-toolbar dense>
             <v-toolbar-title>Documents de l'équipe</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>

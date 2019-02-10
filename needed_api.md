@@ -32,3 +32,9 @@
 ## Inscrits
 
 - get_inscrits
+
+- update_inscrit 
+	dic (id_groupe, bus, semaine, mail, materiel_ski)
+
+- download_liste
+	mode , options

@@ -9,7 +9,18 @@
             ></form-inscrit>
         </v-dialog>
 
-        <v-toolbar height="45">
+		<v-dialog v-model="showExportDialog" max-width="400px" lazy>
+			<form-export 
+				@reject="showExportDialog = false"
+                @accept="downloadListe"
+			></form-export>
+		</v-dialog>
+
+		<v-dialog v-model="showGroupesDialog" max-width="800px" persistent lazy>
+			<liste-groupes :attributions="attributions" @reject="showGroupesDialog = false"></liste-groupes>
+		</v-dialog>
+
+        <v-toolbar dense>
             <v-menu open-on-hover bottom offset-y>
                 <v-btn slot="activator" icon>
                     <v-icon>info</v-icon>
@@ -32,26 +43,47 @@
             <v-spacer></v-spacer>
             <v-toolbar-items>
                 <v-tooltip bottom>
-                    <v-btn @click="addEquipier = true" slot="activator" flat small>
+                    <v-btn @click="showExportDialog = true" slot="activator" flat small>
                         <v-icon class="mr-1">cloud_download</v-icon>Exporter
-                    </v-btn>Exporter une liste des inscrits.
+                    </v-btn>Export au format Excel des inscrits...
                 </v-tooltip>
-
+				<v-divider vertical></v-divider>
                 <v-tooltip bottom>
                     <v-btn
                         slot="activator"
-                        flat
-                        small
-                        :disabled="!hasSelection"
-                        @click="confirmeSupprime = true"
+                        :input-value="showAttente"
+						@click="showAttente = !showAttente"
+						flat
                     >
-                        <v-icon class="mr-1">delete</v-icon>Supprimer
-                    </v-btn>Enlever cet équipier de l'équipe
+					Liste d'attente
+                    </v-btn>Afficher/Masquer la liste d'attente
                 </v-tooltip>
+				<v-tooltip bottom>
+                    <v-menu
+                        slot="activator"
+                        :input-value="showAttente"
+						@click="showAttente = !showAttente"
+						flat
+                    >
+					<v-btn
+                        slot="activator"
+                        :input-value="filterBus"
+						flat
+                    >
+					Bus
+					</v-btn>
+					<v-list>
+						<v-list-tile @click="filterBus = bus.value"  v-for="bus in choixBus" :key="JSON.stringify(bus.value)">
+							{{ bus.text }}
+						</v-list-tile>
+					</v-list>
+                    </v-menu>Filter par trajet en bus...
+                </v-tooltip>
+				<v-divider vertical></v-divider>
                 <v-tooltip bottom>
-                    <v-btn slot="activator" flat small>
-                        <v-icon class="mr-1">cloud_download</v-icon>Exporter
-                    </v-btn>Télécharger une liste au format Excel
+                    <v-btn @click="showGroupesDialog = true"  slot="activator" flat small>
+                        <v-icon class="mr-1">group</v-icon>Groupes
+                    </v-btn>Créer et modifier les groupes...
                 </v-tooltip>
                 <v-tooltip bottom>
                     <v-btn slot="activator" flat small @click="showDocuments = true">
@@ -86,6 +118,7 @@
                     @click="select(props.item)"
                     @dblclick="editedItem = props.item"
 					:style="{color: renderRowColor(props.item)}"
+					v-if="isVisible(props.item)"
                 >
                     <td>
                         <v-icon small class="mr-2" @click="editedItem = props.item">edit</v-icon>
@@ -108,20 +141,29 @@
 </template>
 
 <script>
-import { MixinRenderFields } from "@/fields.js";
+import { MixinRenderFields, BUS} from "@/fields.js";
 import { DataTableMixin } from "@/mixins.js";
 import FormInscrit from "@/components/inscrits/FormInscrit"
+import FormExport from "@/components/inscrits/FormExport"
+import ListeGroupes from "@/components/inscrits/ListeGroupes"
 
 export default {
 	name: "Inscrits",
 	mixins: [MixinRenderFields, DataTableMixin],
 	components: {
-		FormInscrit
+		FormInscrit,
+		FormExport,
+		ListeGroupes
 	},
     data() {
         return {
+			showExportDialog: false,
+			showGroupesDialog: false,
             COULEUR_ATTENTE: "#FF610F",
-            COULEUR_ANNIVERSAIRE: "#dcb920",
+			COULEUR_ANNIVERSAIRE: "#dcb920",
+			showAttente : false,
+			filterBus: null,
+			choixBus: [{value: null, text: "Indifférent"}].concat(BUS),
             items: [
                 {
                     age_debut_camp: 16,
@@ -271,6 +313,9 @@ export default {
 		nbAnniversaires () {
 			return this.items.filter(r => r.has_anniversaire).length
 		},
+		attributions() {
+			return this.items.map(r => ({date_naissance: r.date_naissance, id_groupe : r.id_groupe}))
+		}
 	},
 	methods: {
 		renderRowColor (item) {
@@ -282,6 +327,20 @@ export default {
 				return null
 			}
 		},
+		isVisible(item) { // renvoi true si l'inscrit doit être visible
+			let b = true
+			if (!this.showAttente) {
+				b = b && (item.categorie == "inscrits")
+			}
+			if (this.filterBus) {
+				b = b && (JSON.stringify(item.bus) == JSON.stringify(this.filterBus))
+			}
+			return b
+		},
+		downloadListe(mode, options) {
+			this.showExportDialog = false
+			// requete au serveur
+		}
 	}
 };
 </script>

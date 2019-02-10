@@ -1,4 +1,4 @@
-export { GROUPES, DOCUMENTS, MixinRenderFields, MixinEditFields };
+export { GROUPES, DOCUMENTS, BUS, MixinRenderFields, MixinEditFields };
 
 let GROUPES = {}; // Global variable shared by Inscrits, Lettre, Liste vetement
 

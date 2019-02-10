@@ -5,7 +5,8 @@ let DataTableMixin = {
     data() {
         return {
             loading: false,
-            selected: [],
+			selected: [],
+			headers: [],
             items: [],
             loadingHeight: 10,
             editedItem: null // referene to the currently edited item
@@ -39,6 +40,43 @@ let DataTableMixin = {
 			this.loading = true
 			console.log(diff) // connexion to serveur + notification result
 			this.loading = false
+		},
+		sort(items, attr, isDescending) {
+			if (!attr) return items
+			if (isDescending === null) return items
+			let reducer = function(r) {
+				let value = r[attr]
+				if (!value) return ""
+				if (value.__date__) {
+					return JSON.stringify([value.year, value.month, value.day])
+				} else if (value.__datetime__){
+					return JSON.stringify([value.year, value.month, value.day, value.hour, value.minute, value.second])
+				} else {
+					return JSON.stringify(value)
+				}
+			}
+			const reduced = items.map((r,i) => [reducer(r), i])
+			let comparateur = function(a,b) {
+				if (a[0] < b[0]) {
+					return isDescending ? -1 : 1
+				} else if (a[0] > b[0]) {
+					return isDescending ? 1 : -1
+				} else {
+					return 0
+				}
+			}
+			const sorted_reduced = reduced.sort(comparateur)
+			return sorted_reduced.map( r => items[r[1]])
+		},
+		newId(asInt) {
+			const currentIds = new Set(this.items.map(r => r.id))
+			let isIn, i = 1
+			while (true) {
+				isIn = asInt ? currentIds.has(i) : currentIds.has(String(i))
+				if (!isIn) break
+				i++
+			}
+			return asInt ? i : String(i)
 		}
     },
     computed: {
@@ -79,11 +117,6 @@ let EditFormMixin = {
 		this.reset()
 	},
 	methods: {
-        toDateObject(date) {
-            if (!date) return null;
-            const [year, month, day] = date.split("-");
-            return { __date__: true, day, month, year };
-        },
         reset() { // attention au cas undefined
             this.tmpItem = JSON.parse(JSON.stringify(this.editedItem || {}));
         }
