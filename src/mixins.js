@@ -25,12 +25,14 @@ let DataTableMixin = {
             this.loading = false;
 		},
 		diff_ (new_item, old_item) {
+			old_item = old_item || {}
 			let key, diff = {}
 			for (key in new_item) {
 				if (JSON.stringify(new_item[key]) != JSON.stringify(old_item[key])) {
 					diff[key] = new_item[key]
 				}
 			}	
+			delete diff.id 
 			return diff
 		},
 		updateItem (item) { // compare given item with edited item and modify changing content
