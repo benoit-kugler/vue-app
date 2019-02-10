@@ -31,7 +31,7 @@
 
 ## Inscrits
 
-- get_inscrits
+- get_inscrits (besoin aussi des groupes)
 
 - update_inscrit 
 	dic (id_groupe, bus, semaine, mail, materiel_ski)

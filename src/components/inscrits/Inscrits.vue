@@ -130,7 +130,7 @@
                     <td class="text-xs-center">{{ date(props.item.date_naissance) }}</td>
                     <td>{{ date_heure(props.item.date_heure) }}</td>
                     <td>{{ props.item.mail }}</td>
-                    <td class="text-xs-center">{{ groupe(props.item.id_groupe) }}</td>
+                    <td class="text-xs-center">{{ $root.groupe(props.item.id_groupe) }}</td>
                     <td class="text-xs-center">{{ bus(props.item.bus) }}</td>
                     <td class="text-xs-center">{{ semaine(props.item.semaine) }}</td>
                     <td class="text-xs-center">{{ materiel_ski(props.item.materiel_ski) }}</td>

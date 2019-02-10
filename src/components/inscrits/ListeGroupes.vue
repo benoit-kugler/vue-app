@@ -85,7 +85,7 @@
 
 <script>
 import { DataTableMixin } from "@/mixins.js";
-import { MixinRenderFields } from "@/fields.js";
+import { MixinRenderFields, GROUPES } from "@/fields.js";
 import FormGroupe from "@/components/inscrits/FormGroupe.vue"
 
 function compare_date(d1, d2) {
@@ -213,6 +213,13 @@ export default {
 			console.log(mode)
 			this.loading = true
 			this.showAppliqueGroupes = false
+						console.log(this.$root)
+
+			for (var i in this.$root.GROUPES) delete this.$root.GROUPES[i] //mise à jour de la varaible globale
+			console.log(this.$root.GROUPES)
+			for (var g of this.items) {
+				this.$root.GROUPES[g.id] = {nom : g.nom}
+			}
 		}
  	}
 };

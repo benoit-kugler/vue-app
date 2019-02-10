@@ -2,6 +2,7 @@ import Accueil from "./components/Accueil.vue";
 import Equipe from "./components/equipe/Equipe.vue";
 import Inscrits from "./components/inscrits/Inscrits.vue";
 
+
 const links = {
     index: {
         path: "/directeurs",
@@ -55,7 +56,7 @@ export const routes = [
 	},
 	{
         path: links.inscrits.path,
-        component: Inscrits,
+		component: Inscrits,
         meta: { title: links.inscrits.title }
 	},
 ];

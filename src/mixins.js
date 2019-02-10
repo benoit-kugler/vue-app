@@ -39,6 +39,10 @@ let DataTableMixin = {
 			if (diff === {}) return 
 			this.loading = true
 			console.log(diff) // connexion to serveur + notification result
+			const index = this.items.findIndex(r => r.id == item.id)
+			for (var g in diff) {
+				this.items[index][g] = diff[g]
+			}
 			this.loading = false
 		},
 		sort(items, attr, isDescending) {

@@ -1,15 +1,13 @@
-export { GROUPES, DOCUMENTS, BUS, MixinRenderFields, MixinEditFields };
+export { DOCUMENTS, BUS, MixinRenderFields, MixinEditFields };
 
-let GROUPES = {}; // Global variable shared by Inscrits, Lettre, Liste vetement
-
-const SEMAINE = ["Camp entier", "Semaine 1", "Semaine 2"]
+const SEMAINE = ["Camp entier", "Semaine 1", "Semaine 2"];
 
 const BUS = [
-	{ value : [true, true], text : "Aller / Retour"},
-	{ value : [true, false], text : "Aller"},
-	{ value : [false, true], text : "Retour"},
-	{ value : [false, false], text : "Aucun"},
-]
+    { value: [true, true], text: "Aller / Retour" },
+    { value: [true, false], text: "Aller" },
+    { value: [false, true], text: "Retour" },
+    { value: [false, false], text: "Aucun" }
+];
 
 const DIPLOMES = {
     bafa: "BAFA Titulaire",
@@ -71,7 +69,7 @@ const ROLES = {
     _infirm: "Infirmière",
     _cuis: "Cuisine",
     _ling: "Lingerie",
-    _autre: "Autre",
+    _autre: "Autre"
     // _campeur: "Campeur",
     // _attente: "Liste d'attente",
     // _attente_reponse: "En attente d'une réponse"
@@ -186,7 +184,7 @@ const DEPARTEMENTS = {
     "974": "La Réunion",
     "976": "Mayotte"
 };
-var MixinRenderFields = {
+const MixinRenderFields = {
     methods: {
         role: value => ROLES[value],
         document: value => DOCUMENTS[value],
@@ -197,31 +195,44 @@ var MixinRenderFields = {
         sexe: value => SEXE[value],
         telephones: value => (value ? value.join(" ; ") : "-"),
         bool: value => (value ? "Oui" : "Non"),
-		departement: value => `${DEPARTEMENTS[value]} (${value})`,
-		date_heure: value => value ? `${value.day}/${value.month}/${value.year} à ${value.hour}:${value.minute}` : null,
-		semaine: value => SEMAINE[value],
-		bus: value => value ? BUS.filter(r => JSON.stringify(r.value) == JSON.stringify(value))[0].text : "-", 
-		materiel_ski: value => value ? "Demandé" : "-",
-		groupe: value => value ? (GROUPES[value] || { nom : "Groupe invalide" }).nom : "-"
+        departement: value => `${DEPARTEMENTS[value]} (${value})`,
+        date_heure: value =>
+            value
+                ? `${value.day}/${value.month}/${value.year} à ${value.hour}:${
+                      value.minute
+                  }`
+                : null,
+        semaine: value => SEMAINE[value],
+        bus: value =>
+            value
+                ? BUS.filter(
+                      r => JSON.stringify(r.value) == JSON.stringify(value)
+                  )[0].text
+                : "-",
+        materiel_ski: value => (value ? "Demandé" : "-"),
     }
 };
 
-var MixinEditFields = {
+const MixinEditFields = {
     data() {
         return {
             EDIT: {
-				sexe: Object.keys(SEXE).map(k => ({ value: k, text: SEXE[k] })),
-				role: Object.keys(ROLES).map(k => ({ value: k, text: ROLES[k] })).sort((a,b) => a.text < b.text ? -1 : 1),
-				documents: Object.keys(DOCUMENTS).map(k => ({ value: k, text: DOCUMENTS[k] })).sort((a,b) => a.text < b.text ? -1 : 1),
-				departement: Object.keys(DEPARTEMENTS).map(k => ({ value: k, text: MixinRenderFields.methods.departement(k)}))
-														.sort((a,b) => a.text < b.text ? -1 : 1),
-				groupes : Object.keys(GROUPES).map(k => ({value : k, text: GROUPES[k].nom})).concat([
-					{value : "0", text: "Groupe par défaut"}
-				]),
-				bus: BUS,
-				semaine : SEMAINE.map((r, i) => ({value: i , text: r}))
-			
-			}
+                sexe: Object.keys(SEXE).map(k => ({ value: k, text: SEXE[k] })),
+                role: Object.keys(ROLES)
+                    .map(k => ({ value: k, text: ROLES[k] }))
+                    .sort((a, b) => (a.text < b.text ? -1 : 1)),
+                documents: Object.keys(DOCUMENTS)
+                    .map(k => ({ value: k, text: DOCUMENTS[k] }))
+                    .sort((a, b) => (a.text < b.text ? -1 : 1)),
+                departement: Object.keys(DEPARTEMENTS)
+                    .map(k => ({
+                        value: k,
+                        text: MixinRenderFields.methods.departement(k)
+                    }))
+                    .sort((a, b) => (a.text < b.text ? -1 : 1)),
+                bus: BUS,
+                semaine: SEMAINE.map((r, i) => ({ value: i, text: r }))
+            }
         };
-    }
+    },
 };

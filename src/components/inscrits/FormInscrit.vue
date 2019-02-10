@@ -15,7 +15,7 @@
                         <v-text-field v-model="tmpItem.mail" label="Mail" :rules="[isEmailValid]"></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md3>
-                        <v-select v-model="tmpItem.id_groupe" :items="EDIT.groupes" label="Groupe"></v-select>
+                        <v-select v-model="tmpItem.id_groupe" :items="$root.editGroupes()" label="Groupe"></v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md3>
                         <v-select v-model="tmpItem.bus" :items="EDIT.bus" label="Trajet en bus"></v-select>
@@ -115,7 +115,8 @@ export default {
     mixins: [MixinRenderFields, MixinEditFields, ValidatorMixin, EditFormMixin],
     props: {
         withDetails: Boolean,
-        withButtons: Boolean
+		withButtons: Boolean,
+		GROUPES: Object
 	},
 	
     data() {
@@ -124,7 +125,7 @@ export default {
     computed: {
         materielSkiActif() {
             return !!this.tmpItem.materiel_ski.need;
-        }
+		}
     },
     methods: {
 		reset() { // ajout field materiel_ski

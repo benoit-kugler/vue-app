@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-card-title>
-            <span class="headline">Modifier le groupe{{ tmpItem.nom }}</span>
+            <span class="headline">Modifier le groupe {{ tmpItem.nom }}</span>
             <v-spacer></v-spacer>
             <v-btn @click="reset">
                 <v-icon>undo</v-icon>Réinitialiser
