@@ -1,4 +1,15 @@
-export { DOCUMENTS, MixinRenderFields, MixinEditFields };
+export { GROUPES, DOCUMENTS, MixinRenderFields, MixinEditFields };
+
+let GROUPES = {}; // Global variable shared by Inscrits, Lettre, Liste vetement
+
+const SEMAINE = ["Camp entier", "Semaine 1", "Semaine 2"]
+
+const BUS = [
+	{ value : [true, true], text : "Aller / Retour"},
+	{ value : [true, false], text : "Aller"},
+	{ value : [false, true], text : "Retour"},
+	{ value : [false, false], text : "Aucun"},
+]
 
 const DIPLOMES = {
     bafa: "BAFA Titulaire",
@@ -186,7 +197,12 @@ var MixinRenderFields = {
         sexe: value => SEXE[value],
         telephones: value => (value ? value.join(" ; ") : "-"),
         bool: value => (value ? "Oui" : "Non"),
-        departement: value => `${DEPARTEMENTS[value]} (${value})`
+		departement: value => `${DEPARTEMENTS[value]} (${value})`,
+		date_heure: value => value ? `${value.day}/${value.month}/${value.year} à ${value.hour}:${value.minute}` : null,
+		semaine: value => SEMAINE[value],
+		bus: value => value ? BUS.filter(r => JSON.stringify(r.value) == JSON.stringify(value))[0].text : "-", 
+		materiel_ski: value => value ? "Demandé" : "-",
+		groupe: value => value ? (GROUPES[value] || { nom : "Groupe invalide" }).nom : "-"
     }
 };
 
@@ -199,6 +215,12 @@ var MixinEditFields = {
 				documents: Object.keys(DOCUMENTS).map(k => ({ value: k, text: DOCUMENTS[k] })).sort((a,b) => a.text < b.text ? -1 : 1),
 				departement: Object.keys(DEPARTEMENTS).map(k => ({ value: k, text: MixinRenderFields.methods.departement(k)}))
 														.sort((a,b) => a.text < b.text ? -1 : 1),
+				groupes : Object.keys(GROUPES).map(k => ({value : k, text: GROUPES[k].nom})).concat([
+					{value : "0", text: "Groupe par défaut"}
+				]),
+				bus: BUS,
+				semaine : SEMAINE.map((r, i) => ({value: i , text: r}))
+			
 			}
         };
     }

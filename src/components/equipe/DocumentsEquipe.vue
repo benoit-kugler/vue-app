@@ -88,7 +88,7 @@
                     <td
                         v-for="docCat in docCats"
                         :key="docCat"
-                        :style="`background:${renderCell(props.item[docCat])[0]}`"
+                        :style="{ background: renderCellColor(props.item[docCat])}"
                     >
                         <v-layout row>
                             <v-flex md4>
@@ -113,7 +113,7 @@
                                 <v-checkbox
                                     height="50px"
                                     hide-details
-                                    :label="renderCell(props.item[docCat])[1]"
+                                    :label="renderCellText(props.item[docCat])"
                                     v-model="props.item[docCat].need"
                                 ></v-checkbox>
                             </v-flex>
@@ -129,6 +129,9 @@
 import { DataTableMixin } from "@/mixins.js";
 import { DOCUMENTS, MixinEditFields } from "@/fields.js";
 import UploadFile from "@/components/UploadFile.vue";
+
+const CELL_COLORS = ["none", "green", "yellow", "red"] // from good to bad
+const CELL_TEXTS = ["Non requis", "Présent", "(Présent)", "Manquant"] // from good to bad
 
 export default {
     name: "DocumentsEquipe",
@@ -214,24 +217,20 @@ export default {
         };
     },
     methods: {
-        renderCell(value) {
-            if (!value) return ["none", ""];
-            var t, c;
-            const has = value.docs.length > 0;
-            if (has && value.need) {
-                c = "green";
-                t = "Ok";
-            } else if (has) {
-                c = "yellow";
-                t = "Non requis";
-            } else if (value.need) {
-                c = "red";
-                t = "Manquant";
-            } else {
-                c = "none";
-                t = "Non demandé";
-            }
-            return [c, t];
+		$_getRequirementLevel(value) {
+			if (!value) return 0;
+			const has = value.docs.length > 0;
+			if (value.need) {
+				return has ? 1 : 3 
+			} else {
+				return has ? 2 : 0
+			}
+		},
+        renderCellColor(value) {
+            return CELL_COLORS[this.$_getRequirementLevel(value)]
+		},
+		renderCellText(value) {
+            return CELL_TEXTS[this.$_getRequirementLevel(value)]
         },
         renderDocumentName(doc) {
             return `${doc.nom_client} (du ${doc.date_heure_modif.day}/

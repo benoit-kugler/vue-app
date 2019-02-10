@@ -4,6 +4,12 @@
 			<slot name="title" :tmpItem="tmpItem">
 				<span class="headline">Modifier la fiche de {{ tmpItem.prenom }} {{ tmpItem.nom }}</span>
 			</slot>
+			
+			<v-spacer v-if="withButtons"></v-spacer>
+			<v-btn v-if="withButtons" @click="reset">
+				<v-icon>undo</v-icon>
+				Réinitialiser
+			</v-btn>
         </v-card-title>
         <v-card-text class="pt-1 pb-1">
             <v-container grid-list-md fluid class="pa-1">
@@ -83,10 +89,7 @@
                     <v-flex xs4 md3>
                         <v-btn @click="$emit('reject')">Retour</v-btn>
                     </v-flex>
-                    <v-flex xs4 md4>
-						<v-btn @click="reset">Annuler les modifications</v-btn>
-					</v-flex>
-                    <v-flex xs0 md2></v-flex>
+                    <v-flex xs4 md6></v-flex>
                     <v-flex xs4 md3>
                         <div class="text-xs-right">
                             <v-btn @click="$emit('accept', tmpItem)">Sauvegarder</v-btn>
@@ -101,47 +104,28 @@
 
 <script>
 import { MixinRenderFields, MixinEditFields } from "@/fields.js";
+import { ValidatorMixin, EditFormMixin } from "@/mixins.js"
 
 export default {
     name: "FormEquipier",
-    mixins: [MixinRenderFields, MixinEditFields],
+	mixins: [MixinRenderFields, MixinEditFields, ValidatorMixin,
+			EditFormMixin],
     props: {
-        editedItem: Object,
 		withDetails: Boolean,
 		withButtons: Boolean,
     },
     data() {
         return {
 			IsoDate: "",
-			tmpItem: {}
         };
 	},
     methods: {
-        toDateObject(date) {
-            if (!date) return null;
-            const [year, month, day] = date.split("-");
-            return { __date__: true, day, month, year };
-        },
-        isEmailValid(value) {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return pattern.test(value) || "Mail invalide.";
-		},
-		reset() {
-			this.tmpItem = JSON.parse(JSON.stringify(this.editedItem)) || {}
-		}
     },
     watch: {
         IsoDate(val) {
 			this.tmpItem.date_naissance = this.toDateObject(this.IsoDate);
 			this.$emit('data_changed', this.tmpItem)
 		},
-		editedItem(val) {
-			this.tmpItem = JSON.parse(JSON.stringify(this.editedItem)) || {}
-			console.log(this.tmpItem)
-		},
-		tmpItem(val) {
-			this.$emit('data_changed', val) // fix no repeition
-		}
     }
 };
 </script>

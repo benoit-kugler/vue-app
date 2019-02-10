@@ -1,6 +1,6 @@
 <template>
     <v-container fluid>
-        <v-dialog v-model="showEditDialog" max-width="1200px" persistent>
+        <v-dialog v-model="showEditDialog" max-width="1200px" persistent lazy>
             <form-equipier
                 :editedItem="editedItem"
                 withButtons
@@ -134,7 +134,6 @@ import AddEquipier from "@/components/equipe/AddEquipier";
 import DocumentsEquipe from "@/components/equipe/DocumentsEquipe";
 
 export default {
-    // props : ["header"],
     mixins: [MixinRenderFields, DataTableMixin],
     components: {
         FormEquipier,
