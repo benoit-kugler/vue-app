@@ -414,7 +414,7 @@ export default {
         },
         renderResponsableHtml(respo) {
             if (!respo) return "<h3>Sans responsable</h3>";
-            return `${respo.prenom} ${respo.nom} (${respo.mail}) <br/>
+            return `${respo.prenom} ${respo.nom} <i>${respo.mail}</i> <br/>
 			Tels: ${this.telephones(respo.tels)} <br/>
 			Adresse: ${respo.adresse} ${respo.code_postal} ${respo.ville}`;
         },
